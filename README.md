@@ -9,12 +9,14 @@ This repository is split in three parts:
 
 ## Usage
 
+### Server
+
 In the **server/src/github.com/ekkinox/docker-manager-tool** directory, you can run:
 
 `go run docker-manager-tool.go`
 
 Runs the backend app in the development mode.<br>
-Serves [ws://localhost:3000/ws/](ws://localhost:5000/ws/) for the web UI.
+Serves [ws://localhost:3000/ws](ws://localhost:5000/ws) for the web UI.
 
 ## Development
 
@@ -36,10 +38,6 @@ Builds the app for production to the `client/build` folder.<br>
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
 The build is minified and the filenames include the rev hashes.<br>
-
-### Server
-
-To be done.
 
 ## Author
 
