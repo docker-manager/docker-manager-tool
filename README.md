@@ -9,6 +9,8 @@ This repository is split in three parts:
 
 ## Usage
 
+## Development
+
 ### Server
 
 In the **server/src/github.com/ekkinox/docker-manager-tool** directory, you can run:
@@ -17,8 +19,6 @@ In the **server/src/github.com/ekkinox/docker-manager-tool** directory, you can 
 
 Runs the backend app in the development mode.<br>
 Serves [http://localhost:5000/ws](http://localhost:5000/ws) for the web UI.
-
-## Development
 
 ### Client
 
