@@ -9,6 +9,8 @@ This repository is split in three parts:
 
 ## Usage
 
+To be done.
+
 ## Development
 
 ### Server
