@@ -16,7 +16,7 @@ In the **server/src/github.com/ekkinox/docker-manager-tool** directory, you can 
 `go run docker-manager-tool.go`
 
 Runs the backend app in the development mode.<br>
-Serves [ws://localhost:3000/ws](ws://localhost:5000/ws) for the web UI.
+Serves [http://localhost:5000/ws](http://localhost:5000/ws) for the web UI.
 
 ## Development
 
