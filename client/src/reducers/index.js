@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
-import WebsocketReducer from './websocket'
+import dockerNetwork from './dockerNetwork'
 
 const RootReducer = combineReducers({
-    WebsocketReducer
+    dockerNetwork
 })
 
 export default RootReducer

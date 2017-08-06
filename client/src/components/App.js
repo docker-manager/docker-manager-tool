@@ -1,12 +1,12 @@
 import React from 'react'
 import Header from './Header'
-import DockerNetwork from './DockerNetwork'
+import WebsocketDockerNetwork from '../containers/WebsocketDockerNetwork'
 import Footer from './Footer'
 
 const App = () => (
   <div>
     <Header />
-    <DockerNetwork />
+    <WebsocketDockerNetwork />
     <Footer />
   </div>
 )

@@ -8,18 +8,22 @@ import { init as websocketInit, emit } from './actions/websocket'
 import App from './components/App'
 import RootReducer from './reducers'
 
-function startUp () {
-    const middleware = [thunkMiddleware.withExtraArgument({ emit })]
+const initialState = {
+    dockerNetwork: {
+        containers: []
+    }
+}
 
-    const store = createStore(
-        RootReducer,
-        applyMiddleware(
-            ...middleware,
-            loggerMiddleware
-        )
-    );
-    websocketInit( store );
-    return store;
+function startUp () {
+    const middleware = [ thunkMiddleware.withExtraArgument({ emit }) ]
+    middleware.push(loggerMiddleware)
+
+    const setup = applyMiddleware(...middleware)(createStore)
+
+    const store = setup(RootReducer, initialState)
+    websocketInit(store)
+
+    return store
 }
 
 render(

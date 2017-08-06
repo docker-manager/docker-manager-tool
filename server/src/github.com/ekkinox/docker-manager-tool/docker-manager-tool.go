@@ -3,14 +3,13 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 	"context"
 	"encoding/json"
-	"time"
 
 	"github.com/googollee/go-socket.io"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/rs/cors"
 )
 
 const (
@@ -18,21 +17,36 @@ const (
 	dockerTickerPeriod = 1 * time.Second
 )
 
-func listContainers() ([]byte, error) {
-	dockerClient, err := client.NewEnvClient()
-	if err != nil {
-		panic(err)
-	}
+//Custom server which basically only contains a socketio variable
+//But we need it to enhance it with functions
+type customServer struct {
+	SocketIoServer *socketio.Server
+}
 
-	containers, err := dockerClient.ContainerList(context.Background(), types.ContainerListOptions{})
-	if err != nil {
-		panic(err)
-	}
-
-	return json.Marshal(containers);
+//Header handling, this is necessary to adjust security and/or header settings in general
+//Please keep in mind to adjust that later on in a productive environment!
+//Access-Control-Allow-Origin will be set to whoever will call the server
+func (s *customServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	origin := r.Header.Get("Origin")
+	w.Header().Set("Access-Control-Allow-Origin", origin)
+	s.SocketIoServer.ServeHTTP(w, r)
 }
 
 func main() {
+	dockerClient := configureDockerClient()
+	ioServer := configureSocketIOServer(dockerClient)
+
+	wsServer := new(customServer)
+	wsServer.SocketIoServer = ioServer
+
+	//HTTP settings
+	println("Core Service is listening on port 5000...")
+	http.Handle("/ws/", wsServer)
+	http.ListenAndServe(":5000", nil)
+}
+
+func configureSocketIOServer(dockerClient *client.Client) *socketio.Server {
 	server, err := socketio.NewServer(nil)
 	if err != nil {
 		log.Fatal(err)
@@ -43,11 +57,6 @@ func main() {
 		log.Println("on connection")
 
 		so.Join("docker")
-
-		//so.On("chat message", func(msg string) {
-		//	so.Emit("chat message", msg)
-		//	so.BroadcastTo("chat", "chat message", msg)
-		//})
 
 		so.On("disconnection", func() {
 			log.Println("on disconnect")
@@ -61,7 +70,7 @@ func main() {
 		for {
 			select {
 			case <-dockerTicker.C:
-				p, _ := listContainers()
+				p, _ := listContainers(dockerClient)
 				if p != nil {
 					so.Emit("refreshNetwork", string(p))
 				}
@@ -73,22 +82,24 @@ func main() {
 		log.Println("error:", err)
 	})
 
-	mux := http.NewServeMux()
+	return server
+}
 
-	mux.Handle("/", http.FileServer(http.Dir("./build")))
-	mux.Handle("/ws/", server)
+func configureDockerClient() *client.Client{
+	dockerClient, err := client.NewEnvClient()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// provide default cors to the mux
-	handler := cors.Default().Handler(mux)
+	return dockerClient
+}
 
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowCredentials: false,
-	})
+func listContainers(dockerClient *client.Client) ([]byte, error) {
 
-	// decorate existing handler with cors functionality set in c
-	handler = c.Handler(handler)
+	containers, err := dockerClient.ContainerList(context.Background(), types.ContainerListOptions{})
+	if err != nil {
+		panic(err)
+	}
 
-	log.Println("Serving at localhost:5000...")
-	log.Fatal(http.ListenAndServe(":5000", handler))
+	return json.Marshal(containers);
 }

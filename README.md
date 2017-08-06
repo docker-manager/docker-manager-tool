@@ -9,7 +9,12 @@ This repository is split in three parts:
 
 ## Usage
 
-To be done.
+In the **server/src/github.com/ekkinox/docker-manager-tool** directory, you can run:
+
+`go run docker-manager-tool.go`
+
+Runs the backend app in the development mode.<br>
+Serves [ws://localhost:3000/ws/](ws://localhost:5000/ws/) for the web UI.
 
 ## Development
 
