@@ -17,16 +17,18 @@ const (
 	dockerTickerPeriod = 1 * time.Second
 )
 
-//Custom server which basically only contains a socketio variable
-//But we need it to enhance it with functions
-type customServer struct {
+
+type CustomServer struct {
 	SocketIoServer *socketio.Server
 }
 
-//Header handling, this is necessary to adjust security and/or header settings in general
-//Please keep in mind to adjust that later on in a productive environment!
-//Access-Control-Allow-Origin will be set to whoever will call the server
-func (s *customServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+type DockerNetwork struct {
+	Containers map[string]types.Container
+	Networks map[string]types.NetworkResource
+}
+
+
+func (s *CustomServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	origin := r.Header.Get("Origin")
 	w.Header().Set("Access-Control-Allow-Origin", origin)
@@ -37,11 +39,11 @@ func main() {
 	dockerClient := configureDockerClient()
 	ioServer := configureSocketIOServer(dockerClient)
 
-	wsServer := new(customServer)
+	wsServer := new(CustomServer)
 	wsServer.SocketIoServer = ioServer
 
 	//HTTP settings
-	println("Core Service is listening on port 5000...")
+	println("Docker Manager Tools Service is listening on port 5000...")
 	http.Handle("/ws/", wsServer)
 	http.ListenAndServe(":5000", nil)
 }
@@ -70,10 +72,12 @@ func configureSocketIOServer(dockerClient *client.Client) *socketio.Server {
 		for {
 			select {
 			case <-dockerTicker.C:
-				p, _ := listContainers(dockerClient)
-				if p != nil {
-					so.Emit("refreshNetwork", string(p))
+				dockerNetwork, err := fetchDockerNetwork(dockerClient)
+				if err != nil {
+					log.Fatal(err)
 				}
+				payload, _ := json.Marshal(dockerNetwork)
+				so.Emit("refreshNetwork", string(payload))
 			}
 		}
 	})
@@ -94,12 +98,29 @@ func configureDockerClient() *client.Client{
 	return dockerClient
 }
 
-func listContainers(dockerClient *client.Client) ([]byte, error) {
+func fetchDockerNetwork(dockerClient *client.Client) (*DockerNetwork, error) {
 
 	containers, err := dockerClient.ContainerList(context.Background(), types.ContainerListOptions{})
 	if err != nil {
 		panic(err)
 	}
+	containersMap := make(map[string]types.Container)
+	for _, container := range containers {
+		containersMap[container.ID] = container
+	}
 
-	return json.Marshal(containers);
+	networks, err := dockerClient.NetworkList(context.Background(), types.NetworkListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	networksMap := make(map[string]types.NetworkResource)
+	for _, network := range networks {
+		networksMap[network.ID] = network
+	}
+
+	dockerNetwork := new(DockerNetwork)
+	dockerNetwork.Containers = containersMap
+	dockerNetwork.Networks = networksMap
+
+	return dockerNetwork, err;
 }

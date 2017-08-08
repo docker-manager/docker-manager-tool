@@ -10,7 +10,16 @@ import RootReducer from './reducers'
 
 const initialState = {
     dockerNetwork: {
-        containers: []
+        containers: {},
+        networks: {},
+    }
+}
+
+Array.prototype.pairs = function (func) {
+    for (var i = 0; i < this.length - 1; i++) {
+        for (var j = i; j < this.length - 1; j++) {
+            func([this[i], this[j+1]]);
+        }
     }
 }
 

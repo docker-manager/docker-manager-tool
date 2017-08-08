@@ -13,11 +13,33 @@ const messageTypes = [
 )
 
 const graphOptions = {
+    autoResize: true,
+    width: '800px',
+    height: '800px',
     layout: {
         hierarchical: false
     },
+    physics: {
+        solver: 'repulsion',
+        repulsion: {
+            centralGravity: 0.001,
+            springLength: 400,
+            springConstant: 0.005,
+            nodeDistance: 300,
+            damping: 0.09
+        },
+    },
+    nodes: {
+        shape: 'box'
+    },
     edges: {
-        color: "#000000"
+        arrows: {
+            to: {
+                enabled: false
+            },
+        },
+        color: "#000000",
+        length: 100,
     }
 };
 

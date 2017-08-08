@@ -1,15 +1,9 @@
 import React from 'react'
-import DockerContainer from './DockerContainer'
 import Graph from 'react-graph-vis'
 
-const DockerNetwork = ({ containers = [], graph, options }) => (
-    <div>
-        <ul>
-        {containers.length > 0 && containers.map(
-            container => <DockerContainer key={container.Id} {...container}/>
-        )}
-        </ul>
-        <Graph graph={graph} options={options}/>
+const DockerNetwork = ({ containers = [], graph, options, events }) => (
+    <div className="col-md-8">
+        <Graph graph={graph} options={options} events={events}/>
     </div>
 )
 
