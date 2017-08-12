@@ -5,9 +5,9 @@ const socket = io( uri , {path: path});
 
 export const init = ( store ) => {
     Object.keys( messageTypes )
-        .forEach( type => socket.on( type, ( payload ) =>
-                store.dispatch({ type, payload })
-            )
+        .forEach( type => socket.on( type, ( payload ) => (
+                store.dispatch({ type, payload: JSON.parse(payload) })
+            ))
         );
 };
 

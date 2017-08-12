@@ -3,7 +3,7 @@ const host = 'localhost'
 
 // makes an object of the form {userJoined: 'userJoined'}
 const messageTypes = [
-    'refreshNetwork',
+    'refreshDocker',
 ].reduce(
     (accum, msg) => {
         accum[ msg ] = msg
@@ -14,8 +14,6 @@ const messageTypes = [
 
 const graphOptions = {
     autoResize: true,
-    width: '800px',
-    height: '800px',
     layout: {
         hierarchical: false
     },

@@ -77,7 +77,7 @@ func configureSocketIOServer(dockerClient *client.Client) *socketio.Server {
 					log.Fatal(err)
 				}
 				payload, _ := json.Marshal(dockerNetwork)
-				so.Emit("refreshNetwork", string(payload))
+				so.Emit("refreshDocker", string(payload))
 			}
 		}
 	})

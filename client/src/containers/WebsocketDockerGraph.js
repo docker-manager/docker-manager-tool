@@ -1,6 +1,7 @@
 import { graphOptions } from '../config/config.js'
 import { connect } from 'react-redux'
-import DockerNetwork from '../components/DockerNetwork'
+import { selectContainer } from '../actions/actions'
+import DockerGraph from '../components/DockerGraph'
 
 const getGraphNodes = (containers) => {
     return Object.keys(containers).map(function(containerId) {
@@ -26,26 +27,28 @@ const getGraphEdges = (networks) => {
     return nodes
 }
 
-var events = {
-    selectNode: function(event) {
-        let { nodes, edges } = event;
-        console.log(nodes)
+const mapStateToProps = (state) => ({
+    graph: {
+        nodes: getGraphNodes(state.docker.containers),
+        edges: getGraphEdges(state.docker.networks),
+    },
+    options: graphOptions,
+})
+
+const mapDispatchToProps = dispatch => {
+    return {
+        events: {
+            selectNode: function(event) {
+                let { nodes } = event;
+                dispatch(selectContainer(nodes[0]))
+            }
+        }
     }
 }
 
+const WebsocketDockerGraph = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(DockerGraph)
 
-const mapStateToProps = (state) => ({
-    containers: state.dockerNetwork.containers,
-    graph: {
-        nodes: getGraphNodes(state.dockerNetwork.containers),
-        edges: getGraphEdges(state.dockerNetwork.networks),
-    },
-    options: graphOptions,
-    events: events
-})
-
-const WebsocketDockerNetwork = connect(
-    mapStateToProps
-)(DockerNetwork)
-
-export default WebsocketDockerNetwork
+export default WebsocketDockerGraph

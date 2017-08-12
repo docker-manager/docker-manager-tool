@@ -9,9 +9,18 @@ import App from './components/App'
 import RootReducer from './reducers'
 
 const initialState = {
-    dockerNetwork: {
+    docker: {
         containers: {},
         networks: {},
+    },
+    filters: {
+        networks: {
+            values: [],
+            selectedFilter: '',
+        }
+    },
+    view: {
+        selectedContainerId: ''
     }
 }
 

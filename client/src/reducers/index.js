@@ -1,8 +1,12 @@
 import { combineReducers } from 'redux'
-import dockerNetwork from './dockerNetwork'
+import docker from './docker'
+import filters from './filters'
+import view from './view'
 
 const RootReducer = combineReducers({
-    dockerNetwork
+    docker,
+    filters,
+    view,
 })
 
 export default RootReducer

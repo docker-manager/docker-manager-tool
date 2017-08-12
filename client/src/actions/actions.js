@@ -1,6 +1,8 @@
-export const selectContainer = container => {
+import * as actionTypes from '../actions/actionTypes'
+
+export const selectContainer = containerId => {
     return {
-        type: 'SELECT_CONTAINER',
-        container
+        type: actionTypes.selectContainer,
+        containerId
     }
 }
