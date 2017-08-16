@@ -2,6 +2,8 @@
 
 Go based application that allow developers to interact with their docker stack with web UI.
 
+![Docker Manager Tool](doc/images/screenshot.png "Docker Manager Tool")
+
 This repository is split in three parts:
 - **build**: ready to use binary packages
 - **client**: ReactJS + Redux based web UI sources to interact with docker API through server application
