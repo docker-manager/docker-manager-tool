@@ -3,18 +3,22 @@ package main
 import (
 	"log"
 	"net/http"
-	"time"
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/googollee/go-socket.io"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/api/types/filters"
 )
 
 const (
 	// Poll docker network for changes with this period.
 	dockerTickerPeriod = 1 * time.Second
+
+	// Docker websocket room.
+	dockerWebsocketRoom = "docker"
 )
 
 
@@ -22,11 +26,34 @@ type CustomServer struct {
 	SocketIoServer *socketio.Server
 }
 
-type DockerNetwork struct {
+type DockerWebsocketData struct {
 	Containers map[string]types.Container
-	Networks map[string]types.NetworkResource
+	Networks map[string][]string
 }
 
+var DockerWebsocketNetworksFilter = "*"
+var DockerWebsocketContainersFilter = ""
+
+func main() {
+	//docker client init
+	dockerClient := configureDockerClient()
+
+	//websocket servers init
+	interactionIoServer := configureInteractionSocketIOServer(dockerClient)
+	backgroundIoServer := configureBackgroundSocketIOServer(dockerClient)
+	interactionWsServer := new(CustomServer)
+	interactionWsServer.SocketIoServer = interactionIoServer
+	backgroundWsServer := new(CustomServer)
+	backgroundWsServer.SocketIoServer = backgroundIoServer
+
+	//HTTP settings
+	println("Docker Manager Tools Service is listening on  http://localhost:5000")
+	//http.Handle("/", http.FileServer(http.Dir("./build")))
+	http.Handle("/interaction/", interactionWsServer)
+	http.Handle("/background/", backgroundWsServer)
+	http.ListenAndServe(":5000", nil)
+
+}
 
 func (s *CustomServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -35,20 +62,7 @@ func (s *CustomServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.SocketIoServer.ServeHTTP(w, r)
 }
 
-func main() {
-	dockerClient := configureDockerClient()
-	ioServer := configureSocketIOServer(dockerClient)
-
-	wsServer := new(CustomServer)
-	wsServer.SocketIoServer = ioServer
-
-	//HTTP settings
-	println("Docker Manager Tools Service is listening on port 5000...")
-	http.Handle("/ws/", wsServer)
-	http.ListenAndServe(":5000", nil)
-}
-
-func configureSocketIOServer(dockerClient *client.Client) *socketio.Server {
+func configureInteractionSocketIOServer(dockerClient *client.Client) *socketio.Server {
 	server, err := socketio.NewServer(nil)
 	if err != nil {
 		log.Fatal(err)
@@ -56,13 +70,43 @@ func configureSocketIOServer(dockerClient *client.Client) *socketio.Server {
 
 	server.On("connection", func(so socketio.Socket) {
 
-		log.Println("on connection")
-
-		so.Join("docker")
-
-		so.On("disconnection", func() {
-			log.Println("on disconnect")
+		so.On("askDockerData", func() {
+			log.Println("askDockerData")
+			so.Emit("receiveDockerData", fetchDockerWebsocketData(dockerClient))
 		})
+
+		so.On("filterDockerNetworks", func(filter string) {
+			log.Println("filterDockerNetworks " + filter)
+			DockerWebsocketNetworksFilter = filter
+			so.Emit("receiveDockerData", fetchDockerWebsocketData(dockerClient))
+		})
+
+		so.On("filterDockerContainers", func(filter string) {
+			log.Println("filterDockerContainers " + filter)
+			DockerWebsocketContainersFilter = filter
+			so.Emit("receiveDockerData", fetchDockerWebsocketData(dockerClient))
+		})
+	})
+
+	server.On("error", func(so socketio.Socket, err error) {
+		log.Println("InteractionSocket error:", err)
+	})
+
+	return server
+}
+
+func configureBackgroundSocketIOServer(dockerClient *client.Client) *socketio.Server {
+	server, err := socketio.NewServer(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server.On("connection", func(so socketio.Socket) {
+
+		err := so.Join(dockerWebsocketRoom)
+		if err == nil {
+			log.Println("New backgound connection on '" + dockerWebsocketRoom + "' room by " + so.Id())
+		}
 
 		dockerTicker := time.NewTicker(dockerTickerPeriod)
 		defer func() {
@@ -72,18 +116,13 @@ func configureSocketIOServer(dockerClient *client.Client) *socketio.Server {
 		for {
 			select {
 			case <-dockerTicker.C:
-				dockerNetwork, err := fetchDockerNetwork(dockerClient)
-				if err != nil {
-					log.Fatal(err)
-				}
-				payload, _ := json.Marshal(dockerNetwork)
-				so.Emit("refreshDocker", string(payload))
+				so.Emit("receiveDockerData", fetchDockerWebsocketData(dockerClient))
 			}
 		}
 	})
 
 	server.On("error", func(so socketio.Socket, err error) {
-		log.Println("error:", err)
+		log.Println("BackgroundSocket error:", err)
 	})
 
 	return server
@@ -98,29 +137,39 @@ func configureDockerClient() *client.Client{
 	return dockerClient
 }
 
-func fetchDockerNetwork(dockerClient *client.Client) (*DockerNetwork, error) {
+func fetchDockerWebsocketData(dockerClient *client.Client) string {
 
-	containers, err := dockerClient.ContainerList(context.Background(), types.ContainerListOptions{})
+	filter := filters.NewArgs()
+
+	if DockerWebsocketNetworksFilter != "*" {
+		filter.Add("network", DockerWebsocketNetworksFilter)
+	}
+
+	if DockerWebsocketContainersFilter != "*" {
+		filter.Add("name", DockerWebsocketContainersFilter)
+	}
+
+	containers, err := dockerClient.ContainerList(context.Background(), types.ContainerListOptions{
+		All: false,
+		Filters: filter,
+	})
 	if err != nil {
 		panic(err)
 	}
+
 	containersMap := make(map[string]types.Container)
+	networksMap := make(map[string][]string)
 	for _, container := range containers {
 		containersMap[container.ID] = container
+		for networkName, _ := range container.NetworkSettings.Networks {
+			networksMap[networkName] = append(networksMap[networkName], container.ID)
+		}
 	}
 
-	networks, err := dockerClient.NetworkList(context.Background(), types.NetworkListOptions{})
-	if err != nil {
-		panic(err)
-	}
-	networksMap := make(map[string]types.NetworkResource)
-	for _, network := range networks {
-		networksMap[network.ID] = network
-	}
+	dockerWebsocketData := new(DockerWebsocketData)
+	dockerWebsocketData.Containers = containersMap
+	dockerWebsocketData.Networks = networksMap
 
-	dockerNetwork := new(DockerNetwork)
-	dockerNetwork.Containers = containersMap
-	dockerNetwork.Networks = networksMap
-
-	return dockerNetwork, err;
+	payload, _ := json.Marshal(dockerWebsocketData)
+	return string(payload)
 }

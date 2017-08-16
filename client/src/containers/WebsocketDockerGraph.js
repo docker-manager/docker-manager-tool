@@ -14,12 +14,12 @@ const getGraphNodes = (containers) => {
 
 const getGraphEdges = (networks) => {
     let nodes = []
-     Object.keys(networks).map(function(networkId) {
-         Object.keys(networks[networkId].Containers).pairs(function(pair){
+     Object.keys(networks).map(function(networkName) {
+         networks[networkName].pairs(function(pair){
              nodes.push({
                  from: pair[0],
                  to: pair[1],
-                 label: networks[networkId].Name
+                 label: networkName
              })
          })
      })
@@ -41,7 +41,10 @@ const mapDispatchToProps = dispatch => {
             selectNode: function(event) {
                 let { nodes } = event;
                 dispatch(selectContainer(nodes[0]))
-            }
+            },
+            deselectNode: function() {
+                dispatch(selectContainer())
+            },
         }
     }
 }

@@ -9,10 +9,8 @@ const App = () => (
             <WebsocketDockerGraph />
         </div>
         <div className="col-md-3">
-            <div className="well">
-                <DockerFilters />
-                <SelectedDockerContainerDetails />
-            </div>
+            <DockerFilters />
+            <SelectedDockerContainerDetails />
         </div>
     </div>
 )

@@ -11,7 +11,9 @@ const containerDetails = (container) => (
 
 const DockerContainerDetails = ({container}) => (
     <div className="panel panel-primary">
-        <div className="panel-heading">Details</div>
+        <div className="panel-heading">
+            <span className="glyphicon glyphicon-search" aria-hidden="true"/>&nbsp;Details
+        </div>
         <div className="panel-body">
             { container.Id ? containerDetails(container) : 'Select a container'}
         </div>

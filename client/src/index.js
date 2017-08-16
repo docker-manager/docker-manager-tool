@@ -16,7 +16,10 @@ const initialState = {
     filters: {
         networks: {
             values: [],
-            selectedFilter: '',
+            current: '',
+        },
+        containers: {
+            current: '',
         }
     },
     view: {

@@ -3,7 +3,10 @@ const host = 'localhost'
 
 // makes an object of the form {userJoined: 'userJoined'}
 const messageTypes = [
-    'refreshDocker',
+    'askDockerData',
+    'receiveDockerData',
+    'filterDockerNetworks',
+    'filterDockerContainers'
 ].reduce(
     (accum, msg) => {
         accum[ msg ] = msg
@@ -20,10 +23,10 @@ const graphOptions = {
     physics: {
         solver: 'repulsion',
         repulsion: {
-            centralGravity: 0.001,
-            springLength: 400,
+            centralGravity: 0.091,
+            springLength: 100,
             springConstant: 0.005,
-            nodeDistance: 300,
+            nodeDistance: 200,
             damping: 0.09
         },
     },
@@ -38,6 +41,10 @@ const graphOptions = {
         },
         color: "#000000",
         length: 100,
+    },
+    interaction:{
+        hover: true,
+        hoverConnectedEdges: true
     }
 };
 
@@ -47,5 +54,6 @@ module.exports = {
     messageTypes,
     graphOptions,
     uri: `${host}:${port}`,
-    path: '/ws/'
+    interactionPath: '/interaction/',
+    backgroundPath: '/background/'
 }
