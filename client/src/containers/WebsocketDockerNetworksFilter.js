@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { filterDockerNetworks } from '../actions/actions'
-import DockerSelectFilter from '../components/DockerSelectFilter'
+import DockerNetworksFilter from '../components/DockerNetworksFilter'
 
 const getFilters = (networks) => {
     return Object.keys(networks)
@@ -18,6 +18,6 @@ const mapDispatchToProps = {
 const WebsocketDockerNetworksFilter = connect(
     mapStateToProps,
     mapDispatchToProps
-)(DockerSelectFilter)
+)(DockerNetworksFilter)
 
 export default WebsocketDockerNetworksFilter

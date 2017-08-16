@@ -1,18 +1,19 @@
 import { connect } from 'react-redux'
-import { filterDockerContainers } from '../actions/actions'
-import DockerTextFilter from '../components/DockerTextFilter'
+import { filterDockerContainers, filterDockerContainersAll } from '../actions/actions'
+import DockerContainersFilter from '../components/DockerContainersFilter'
 
 const mapStateToProps = (state) => ({
     name: 'Containers'
 })
 
 const mapDispatchToProps = {
-    onFilter: filterDockerContainers
+    onFilterAll: filterDockerContainersAll,
+    onFilter: filterDockerContainers,
 }
 
 const WebsocketDockerContainersFilter = connect(
     mapStateToProps,
     mapDispatchToProps
-)(DockerTextFilter)
+)(DockerContainersFilter)
 
 export default WebsocketDockerContainersFilter

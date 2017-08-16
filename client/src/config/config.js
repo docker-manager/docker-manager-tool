@@ -6,7 +6,8 @@ const messageTypes = [
     'askDockerData',
     'receiveDockerData',
     'filterDockerNetworks',
-    'filterDockerContainers'
+    'filterDockerContainers',
+    'filterDockerContainersAll',
 ].reduce(
     (accum, msg) => {
         accum[ msg ] = msg
@@ -31,7 +32,12 @@ const graphOptions = {
         },
     },
     nodes: {
-        shape: 'box'
+        shape: 'box',
+        font: {
+            color: '#000000',
+            size: 14,
+            face: 'sans serif'
+        }
     },
     edges: {
         arrows: {
@@ -39,8 +45,13 @@ const graphOptions = {
                 enabled: false
             },
         },
-        color: "#000000",
+        color: "#343434",
         length: 100,
+        font: {
+            color: '#343434',
+            size: 13,
+            face: 'sans serif'
+        }
     },
     interaction:{
         hover: true,

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DockerSelectFilter = ({name, filters, onFilter}) => (
+const DockerNetworksFilter = ({name, filters, onFilter}) => (
     <div className="form-group">
         <div className="input-group">
             <span className="input-group-addon">{name}</span>
@@ -12,4 +12,4 @@ const DockerSelectFilter = ({name, filters, onFilter}) => (
     </div>
 )
 
-export default DockerSelectFilter
+export default DockerNetworksFilter

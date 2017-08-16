@@ -30,6 +30,16 @@ export const filterDockerContainers = containerName => {
     };
 }
 
+export const filterDockerContainersAll = filterAll => {
+    return ( dispatch, getState, {emit}) => {
+        dispatch({
+            type: messageTypes.filterDockerContainersAll,
+            filterAll
+        })
+        emit( messageTypes.filterDockerContainersAll, filterAll)
+    };
+}
+
 export const selectContainer = containerId => {
     return {
         type: actionTypes.selectContainer,

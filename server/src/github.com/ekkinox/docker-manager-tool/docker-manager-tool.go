@@ -29,10 +29,18 @@ type CustomServer struct {
 type DockerWebsocketData struct {
 	Containers map[string]types.Container
 	Networks map[string][]string
+	Filters map[string]DockerWebsocketDataFilters
+}
+
+type DockerWebsocketDataFilters struct {
+	NetworksFilter string
+	ContainersFilter string
+	ContainersFilterAll bool
 }
 
 var DockerWebsocketNetworksFilter = "*"
 var DockerWebsocketContainersFilter = ""
+var DockerWebsocketContainersFilterAll = false
 
 func main() {
 	//docker client init
@@ -84,6 +92,12 @@ func configureInteractionSocketIOServer(dockerClient *client.Client) *socketio.S
 		so.On("filterDockerContainers", func(filter string) {
 			log.Println("filterDockerContainers " + filter)
 			DockerWebsocketContainersFilter = filter
+			so.Emit("receiveDockerData", fetchDockerWebsocketData(dockerClient))
+		})
+
+		so.On("filterDockerContainersAll", func(filter bool) {
+			log.Println("filterDockerContainersAll")
+			DockerWebsocketContainersFilterAll = filter
 			so.Emit("receiveDockerData", fetchDockerWebsocketData(dockerClient))
 		})
 	})
@@ -150,7 +164,7 @@ func fetchDockerWebsocketData(dockerClient *client.Client) string {
 	}
 
 	containers, err := dockerClient.ContainerList(context.Background(), types.ContainerListOptions{
-		All: false,
+		All: DockerWebsocketContainersFilterAll,
 		Filters: filter,
 	})
 	if err != nil {
