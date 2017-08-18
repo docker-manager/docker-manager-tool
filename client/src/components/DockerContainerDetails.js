@@ -1,11 +1,23 @@
 import React from 'react'
 import { Tab, Tabs } from 'react-bootstrap';
+import ButtonCopyClipboard from '../components/ButtonCopyClipboard'
 
 const renderContainerDetails = (container) => (
 <Tabs id="containerDetails">
-    <Tab eventKey={1} title="Overview">
+    <Tab eventKey={1} title="Details">
         <table className="table table-striped table-condensed">
             <tbody>
+            <tr>
+                <th>Id</th>
+                <td>
+                    <code><abbr id="aaa" title={container.Id}>{container.Id.substring(0,20)}</abbr></code>
+                    <ButtonCopyClipboard data={container.Id}/>
+                </td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{renderContainerState(container.State)}&nbsp;({container.Status})</td>
+            </tr>
                 <tr>
                     <th>Name</th>
                     <td>{container.Names[0]}</td>
@@ -19,17 +31,20 @@ const renderContainerDetails = (container) => (
                     <td>{container.Labels['com.docker.compose.service'] ? container.Labels['com.docker.compose.service'] : '-'}</td>
                 </tr>
                 <tr>
-                    <th>Id</th>
-                    <td><code><abbr title={container.Id}>{container.Id.substring(0,15)}</abbr></code></td>
+                    <th>Image</th>
+                    <td>{container.Image}</td>
                 </tr>
-                <tr>
-                    <th>Status</th>
-                    <td>{renderContainerState(container.State)}&nbsp;({container.Status})</td>
-                </tr>
+            <tr>
+                <th>Image Id</th>
+                <td>
+                    <code><abbr title={container.ImageID}>{container.ImageID.substring(0,20)}</abbr></code>
+                    <ButtonCopyClipboard data={container.ImageID}/>
+                </td>
+            </tr>
             </tbody>
         </table>
     </Tab>
-    <Tab eventKey={2} title="Details">
+    <Tab eventKey={2} title="Networks">
         <dl className="well">
             <dt>Command</dt>
             <dd>{container.Command}</dd>

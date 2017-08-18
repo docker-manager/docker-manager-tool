@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
+    "clipboard": "^1.7.1",
     "immutable": "^3.8.1",
     "isomorphic-fetch": "^2.2.1",
     "prop-types": "^15.5.10",
