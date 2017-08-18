@@ -25,7 +25,7 @@ const graphOptions = {
     physics: {
         solver: 'repulsion',
         repulsion: {
-            centralGravity: 0.091,
+            centralGravity: 0.031,
             springLength: 100,
             springConstant: 0.005,
             nodeDistance: 200,

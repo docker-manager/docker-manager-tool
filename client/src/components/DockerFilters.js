@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { FormGroup, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { FormGroup, InputGroup, FormControl } from 'react-bootstrap';
 
 class DockerFilters extends Component {
 
@@ -64,16 +64,20 @@ class DockerFilters extends Component {
                         ref="networksFilterInput"
                         componentClass="select"
                         value={currentNetworkFilter}
-                        onChange={(event) => onNetworkFilter(event.target.value)}
+                        onChange={(event) => {
+                            onNetworkFilter(event.target.value)
+                        }}
                     >
                         <option value='*'>All</option>
-                        {networkFilters.map(filter => <option key={filter} value={filter}>{filter}</option>)}
+                        {networkFilters.map(
+                            filter => <option key={filter} value={filter}>{filter}</option>
+                        )}
                     </FormControl>
                 </InputGroup>
             </FormGroup>
-            <Button bsStyle="danger" className="btn-block btn-sm" onClick={this.onReset}>
-                Reset Filters
-            </Button>
+            <a href="#" className="btn btn-danger btn-block btn-sm" onClick={this.onReset}>
+                <span className="glyphicon glyphicon-ban-circle" aria-hidden="true"/>&nbsp;Reset Filters
+            </a>
         </form>
     </div>
 </div>
