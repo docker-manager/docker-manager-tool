@@ -8,6 +8,7 @@ const messageTypes = [
     'filterDockerNetworks',
     'filterDockerContainers',
     'filterDockerContainersAll',
+    'resetDockerFilter',
 ].reduce(
     (accum, msg) => {
         accum[ msg ] = msg
@@ -66,5 +67,5 @@ module.exports = {
     graphOptions,
     uri: `${host}:${port}`,
     interactionPath: '/interaction/',
-    backgroundPath: '/background/'
+    backgroundPath: '/graph/'
 }

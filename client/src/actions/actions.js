@@ -12,31 +12,28 @@ export const askDockerData = () => {
 
 export const filterDockerNetworks = networkName => {
     return ( dispatch, getState, {emit}) => {
-        dispatch({
-            type: messageTypes.filterDockerNetworks,
-            networkName
-        })
         emit( messageTypes.filterDockerNetworks, networkName)
     };
 }
 
 export const filterDockerContainers = containerName => {
     return ( dispatch, getState, {emit}) => {
-        dispatch({
-            type: messageTypes.filterDockerContainers,
-            containerName
-        })
         emit( messageTypes.filterDockerContainers, containerName)
     };
 }
 
 export const filterDockerContainersAll = filterAll => {
     return ( dispatch, getState, {emit}) => {
-        dispatch({
-            type: messageTypes.filterDockerContainersAll,
-            filterAll
-        })
         emit( messageTypes.filterDockerContainersAll, filterAll)
+    };
+}
+
+export const resetDockerFilter = () => {
+    return ( dispatch, getState, {emit}) => {
+        dispatch({
+            type: actionTypes.resetDockerFilterForm
+        })
+        emit( messageTypes.resetDockerFilter)
     };
 }
 

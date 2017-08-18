@@ -20,6 +20,7 @@ const initialState = {
         },
         containers: {
             current: '',
+            all: false
         }
     },
     view: {
