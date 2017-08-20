@@ -7,9 +7,8 @@ import {
     resetDockerFilter
 } from '../actions/actions'
 
-
 const mapStateToProps = (state) => (
-    Object.assign({}, state, {
+    Object.assign({}, {
         currentContainerFilter: state.filters.containers.current,
         currentContainerFilterAll: state.filters.containers.all,
         networkFilters: Object.keys(state.docker.networks),

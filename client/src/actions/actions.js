@@ -43,3 +43,21 @@ export const selectContainer = containerId => {
         containerId
     }
 }
+
+export const startContainer = containerId => {
+    return ( dispatch, getState, {emit}) => {
+        emit( messageTypes.startContainer, containerId)
+    };
+}
+
+export const stopContainer = containerId => {
+    return ( dispatch, getState, {emit}) => {
+        emit( messageTypes.stopContainer, containerId)
+    };
+}
+
+export const restartContainer = containerId => {
+    return ( dispatch, getState, {emit}) => {
+        emit( messageTypes.restartContainer, containerId)
+    };
+}

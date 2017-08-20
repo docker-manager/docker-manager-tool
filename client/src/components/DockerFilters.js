@@ -33,7 +33,7 @@ class DockerFilters extends Component {
     </div>
     <div className="panel-body">
         <form>
-            <FormGroup>
+            <FormGroup bsSize="small">
                 <InputGroup>
                     <InputGroup.Addon>Containers</InputGroup.Addon>
                     <FormControl
@@ -57,7 +57,7 @@ class DockerFilters extends Component {
                     </InputGroup.Addon>
                 </InputGroup>
             </FormGroup>
-            <FormGroup>
+            <FormGroup bsSize="small">
                 <InputGroup>
                     <InputGroup.Addon>Related networks</InputGroup.Addon>
                     <FormControl

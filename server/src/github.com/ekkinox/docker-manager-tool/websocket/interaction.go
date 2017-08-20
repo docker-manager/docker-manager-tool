@@ -47,6 +47,24 @@ func BuildInteractionWebsocketServer(dockerClient *client.Client) *socketio.Serv
 			global.GlobalDockerGraphFilters.ContainersFilterAll = false
 			so.Emit("receiveDockerData", docker.FetchDockerGraphData(dockerClient))
 		})
+
+		so.On("startContainer", func(containerId string) {
+			log.Println("startContainer " + containerId)
+			docker.StartContainer(dockerClient, containerId)
+			so.Emit("receiveDockerData", docker.FetchDockerGraphData(dockerClient))
+		})
+
+		so.On("stopContainer", func(containerId string) {
+			log.Println("stopContainer " + containerId)
+			docker.StopContainer(dockerClient, containerId)
+			so.Emit("receiveDockerData", docker.FetchDockerGraphData(dockerClient))
+		})
+
+		so.On("restartContainer", func(containerId string) {
+			log.Println("restartContainer " + containerId)
+			docker.RestartContainer(dockerClient, containerId)
+			so.Emit("receiveDockerData", docker.FetchDockerGraphData(dockerClient))
+		})
 	})
 
 	server.On("error", func(so socketio.Socket, err error) {

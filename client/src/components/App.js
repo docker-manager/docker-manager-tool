@@ -1,7 +1,7 @@
 import React from 'react'
 import WebsocketDockerGraph from '../containers/WebsocketDockerGraph'
 import WebsocketDockerFilters from '../containers/WebsocketDockerFilters'
-import SelectedDockerContainerDetails from '../containers/SelectedDockerContainerDetails'
+import SelectedDockerContainerView from '../containers/SelectedDockerContainerView'
 
 const App = () => (
     <div className="row">
@@ -10,7 +10,7 @@ const App = () => (
         </div>
         <div className="col-md-3">
             <WebsocketDockerFilters />
-            <SelectedDockerContainerDetails />
+            <SelectedDockerContainerView />
         </div>
     </div>
 )

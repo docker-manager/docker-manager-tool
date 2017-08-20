@@ -9,6 +9,9 @@ const messageTypes = [
     'filterDockerContainers',
     'filterDockerContainersAll',
     'resetDockerFilter',
+    'startContainer',
+    'stopContainer',
+    'restartContainer',
 ].reduce(
     (accum, msg) => {
         accum[ msg ] = msg

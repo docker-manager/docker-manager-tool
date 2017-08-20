@@ -60,3 +60,21 @@ func FetchDockerGraphData(dockerClient *client.Client) string {
 
 	return string(payload)
 }
+
+func StartContainer(dockerClient *client.Client, containerId string) {
+	if err := dockerClient.ContainerStart(context.Background(), containerId, types.ContainerStartOptions{}); err != nil {
+		panic(err)
+	}
+}
+
+func StopContainer(dockerClient *client.Client, containerId string) {
+	if err := dockerClient.ContainerStop(context.Background(), containerId, nil); err != nil {
+		panic(err)
+	}
+}
+
+func RestartContainer(dockerClient *client.Client, containerId string) {
+	if err := dockerClient.ContainerRestart(context.Background(), containerId, nil); err != nil {
+		panic(err)
+	}
+}
