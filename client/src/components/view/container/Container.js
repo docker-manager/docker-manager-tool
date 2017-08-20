@@ -44,6 +44,10 @@ const Container = ({container}) => (
                         <th>Ports</th>
                         <td>{renderContainerPorts(container.Ports)}</td>
                     </tr>
+                    <tr>
+                        <th>Command</th>
+                        <td><kbd>{container.Command}</kbd></td>
+                    </tr>
                 </tbody>
             </table>
         </li>
