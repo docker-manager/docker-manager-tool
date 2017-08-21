@@ -28,10 +28,10 @@ const graphOptions = {
     physics: {
         solver: 'repulsion',
         repulsion: {
-            centralGravity: 0.031,
+            centralGravity: 0.051,
             springLength: 100,
-            springConstant: 0.005,
-            nodeDistance: 200,
+            springConstant: 0.001,
+            nodeDistance: 300,
             damping: 0.09
         },
     },
