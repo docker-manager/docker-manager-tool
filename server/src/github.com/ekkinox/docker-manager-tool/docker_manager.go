@@ -34,7 +34,7 @@ func main() {
 
 	//HTTP settings
 	println("Docker Manager Tools Service is listening on  http://localhost:5000")
-	//http.Handle("/", http.FileServer(http.Dir("./build")))
+	http.Handle("/", http.FileServer(http.Dir("./build")))
 	http.Handle("/interaction/", interactionWsServer)
 	http.Handle("/graph/", graphWsServer)
 	http.ListenAndServe(":5000", nil)
